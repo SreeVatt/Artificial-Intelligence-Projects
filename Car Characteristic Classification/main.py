@@ -29,6 +29,7 @@ for i,item in enumerate(x[0]):
     x_encoder[:,i]=label_encoder[-1].fit_transform(x[:,i])
 x=x_encoder[:,:-1].astype(int) 
 y=x_encoder[:,-1].astype(int)
+y = label_encoder[-1].fit_transform(x[:, -1]).astype(int)
 
 #Building Random Forest Classifier
 params={'n_estimators':200,'max_depth':8,'random_state':7}
@@ -41,8 +42,16 @@ accuracy=cross_val_score(classifier,x,y,scoring='accuracy',cv=3)
 print("Accuracy of the Classifier :",round(100*accuracy.mean(),2),'%')          
 
 #Testing
-input_data=['vhigh','vhigh','2','2','small','low']
-input_data_encoded=[-1]*len(input_data)
-for i,item in enumerate(input_data):
-    input_data_encoded[i]=int(label_encoder[i].transform(input_data[i]))
-input_data_encoder=np.array(input_data_encoded)
+input_data = ['vhigh', 'vhigh', '2', '2', 'small', 'low']
+input_data_encoded = np.empty(len(input_data))  # Create an empty array to store encoded values
+
+for i, item in enumerate(input_data):
+    input_data_encoded[i] = label_encoder[i].transform([item])[0]  # Encode and store in the array
+
+input_data_encoded = np.array(input_data_encoded)
+input_data_encoded = input_data_encoded.reshape(1, -1)
+
+
+# Predict and print output for a particular datapoint
+output_class = classifier.predict(input_data_encoded)
+print ("Output class:",label_encoder[-1].inverse_transform(output_class)[0])
