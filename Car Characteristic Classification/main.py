@@ -8,6 +8,7 @@ Created on Thu May 31 21:24:09 2024
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 input_file="C:\\Users\\sreev\\Downloads\\Car Characteristic Classification\\Data\\car.data"
@@ -55,3 +56,47 @@ input_data_encoded = input_data_encoded.reshape(1, -1)
 # Predict and print output for a particular datapoint
 output_class = classifier.predict(input_data_encoded)
 print ("Output class:",label_encoder[-1].inverse_transform(output_class)[0])
+
+#Validation Curves
+from sklearn.model_selection import validation_curve
+classifier=RandomForestClassifier(max_depth=4,random_state=7)
+parameter_grid=np.linspace(25,200,8).astype(int)
+train_scores,validation_scores=validation_curve(classifier,x,y,"n_estimators",parameter_grid,cv=5)
+print ("\n##### VALIDATION CURVES #####")
+print ("\nParam: n_estimators\nTraining scores:\n", train_scores)
+print ("\nParam: n_estimators\nValidation scores:\n",validation_scores)
+
+# Plot the curve
+plt.figure()
+plt.plot(parameter_grid, 100*np.average(train_scores, axis=1),
+color='black')
+plt.title('Training curve')
+plt.xlabel('Number of estimators')
+plt.ylabel('Accuracy')
+plt.show()
+
+#Validation Curves
+classifier = RandomForestClassifier(n_estimators=20,random_state=7)
+parameter_grid = np.linspace(2, 10, 5).astype(int)
+train_scores, valid_scores = validation_curve(classifier, x, y,"max_depth", parameter_grid, cv=5)
+print ("\nParam: max_depth\nTraining scores:\n", train_scores)
+print ("\nParam: max_depth\nValidation scores:\n",validation_scores)
+
+# Plot the curve
+plt.figure()
+plt.plot(parameter_grid, 100*np.average(train_scores, axis=1),
+color='black')
+plt.title('Validation curve')
+plt.xlabel('Maximum depth of the tree')
+plt.ylabel('Accuracy')
+plt.show()
+
+ # Learning curves
+from sklearn.learning_curve import learning_curve
+classifier = RandomForestClassifier(random_state=7)
+parameter_grid = np.array([200, 500, 800, 1100])
+train_sizes, train_scores, validation_scores =learning_curve(classifier,x, y, train_sizes=parameter_grid, cv=5)
+print ("\n##### LEARNING CURVES #####")
+print ("\nTraining scores:\n", train_scores)
+print ("\nValidation scores:\n", validation_scores)
+
