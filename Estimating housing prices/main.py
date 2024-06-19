@@ -46,24 +46,28 @@ print("Mean Squared Error : ",mse)
 print("Explained Variable Score : ",evs)
 
  
-def plot_feature_importance(feature_importance,title,feature_name):
-    #Normalize the importance value
-    feature_importance=100.0*(feature_importance/max(feature_importance))
-    
-    #Sort the index values and flip them for descending order
-    index_sorted=np.flipud(np.argsort(feature_importance))
-    
-    #Center the location
-    pos=np.arange(index_sorted.shape[0] )+0.5
-    
-    #plot the bar graph
+def plot_feature_importance(feature_importance, title, feature_names):
+    # Normalize the importance values
+    feature_importance = 100.0 * (feature_importance / max(feature_importance))
+
+    # Sort the indices and flip them for descending order
+    index_sorted = np.flipud(np.argsort(feature_importance))
+
+    # Adjust feature names based on sorted indices
+    sorted_feature_names = np.array(feature_names)[index_sorted]
+
+    # Center the location
+    pos = np.arange(index_sorted.shape[0]) + 0.5
+
+    # Plot the bar graph
     plt.figure()
-    plt.bar(pos,feature_importance[index_sorted],align='center')
-    plt.xticks(pos, feature_name[index_sorted])
+    plt.bar(pos, feature_importance[index_sorted], align='center')
+    plt.xticks(pos, sorted_feature_names, rotation='vertical')  # Update this line
     plt.ylabel('Relative Importance')
     plt.title(title)
+    plt.tight_layout()
     plt.show()
 
-plot_feature_importance(dt_regressor.feature_importances_,'Decision Tree regressor', housing_data.feature_names)
-plot_feature_importance(ab_regressor.feature_importances_,'AdaBoost regressor', housing_data.feature_names)
-    
+# Use the function with corrected parameter names
+plot_feature_importance(dt_regressor.feature_importances_, 'Decision Tree regressor', housing_data.feature_names)
+plot_feature_importance(ab_regressor.feature_importances_, 'AdaBoost regressor', housing_data.feature_names)
